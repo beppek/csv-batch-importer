@@ -1,5 +1,5 @@
 {
-  "name": "localz",
+  "name": "csv-batch-importer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Max Karlsson",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^24.0.9",
