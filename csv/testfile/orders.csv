@@ -1,0 +1,5 @@
+orderId,customerId,item,quantity
+sample-123,1552020950881-1,Flowers,2
+sample-124,1552020950881-1,Bread,1
+sample-125,customer-321,Flowers,2
+sample-126,1552020950881-5,Flowers,2
