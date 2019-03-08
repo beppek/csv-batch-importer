@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit"
+    "test": "jest --detectOpenHandles --forceExit",
+    "seed:db": "ts-node ./src/scripts/seedDB.ts"
   },
   "keywords": [],
   "author": "Max Karlsson",
@@ -17,6 +18,8 @@
     "typescript": "^3.3.3333"
   },
   "dependencies": {
-    "mongoose": "^5.4.17"
+    "crypto": "^1.0.1",
+    "mongoose": "^5.4.17",
+    "ts-node": "^8.0.3"
   }
 }

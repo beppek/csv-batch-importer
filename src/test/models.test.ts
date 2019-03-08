@@ -14,7 +14,7 @@ describe('Test Models', () => {
     }
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     try {
       await mongoose.connection.db.dropDatabase();
     } catch (error) {

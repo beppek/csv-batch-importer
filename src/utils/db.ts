@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 
 const { NODE_ENV } = process.env;
 
-const dbName = NODE_ENV === 'test' ? 'test-csv-db' : 'csv-db';
+const dbName = NODE_ENV === 'test' ? 'test-csv-import' : 'csv-import';
 
 const URI = `mongodb://localhost:27017/${dbName}`;
 
