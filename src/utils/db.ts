@@ -8,7 +8,10 @@ const URI = `mongodb://localhost:27017/${dbName}`;
 
 export const connect = async () => {
   try {
-    await mongoose.connect(URI, {});
+    await mongoose.connect(URI, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+    });
   } catch (error) {
     console.log(error);
   }
