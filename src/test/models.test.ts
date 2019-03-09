@@ -25,7 +25,7 @@ describe('Test Models', () => {
   it('Should successfully save a customer', async done => {
     expect.assertions(1);
     const customer = {
-      customerId: 'ABC123',
+      customerId: 'ABC111',
       firstName: 'Mr',
       lastName: 'Customer',
     };
@@ -38,7 +38,7 @@ describe('Test Models', () => {
     expect.assertions(1);
     const order = {
       orderId: '123ABC',
-      customerId: 'ABC123',
+      customerId: 'ABC1111',
       item: 'Computer',
       quantity: 1,
     };
