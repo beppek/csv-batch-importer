@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
-    "seed": "ts-node ./src/scripts/seed.ts",
+    "seed": "ts-node ./src/scripts/run.ts",
     "start": "ts-node ./src/index.ts"
   },
   "keywords": [],
@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "chalk": "^2.4.2",
-    "crypto": "^1.0.1",
     "csv-parser": "^2.2.0",
     "figlet": "^1.2.1",
     "inquirer": "^6.2.2",
