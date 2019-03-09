@@ -44,8 +44,10 @@ export const startImport = (path: string) =>
         }
       })
       .on('end', () => {
-        importPromises.push(importOrders(orders));
-        totalImported += orders.length;
+        if (orders.length > 0) {
+          importPromises.push(importOrders(orders));
+          totalImported += orders.length;
+        }
         Promise.all(importPromises)
           .then(() => {
             resolve(totalImported);
