@@ -1,11 +1,13 @@
 import * as mongoose from 'mongoose';
 
-export interface OrderModel extends mongoose.Document {
+export interface iOrder {
   orderId: string;
   customerId: string;
   item: string;
   quantity: number;
 }
+
+export interface OrderModel extends iOrder, mongoose.Document {}
 
 const schema = new mongoose.Schema({
   orderId: { type: String, required: true, unique: true },

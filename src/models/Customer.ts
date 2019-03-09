@@ -1,10 +1,12 @@
 import * as mongoose from 'mongoose';
 
-export interface CustomerModel extends mongoose.Document {
+export interface iCustomer {
   customerId: string;
   firstName: string;
   lastName: string;
 }
+
+export interface CustomerModel extends iCustomer, mongoose.Document {}
 
 const schema = new mongoose.Schema({
   customerId: { type: String, required: true, unique: true },
