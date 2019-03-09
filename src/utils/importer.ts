@@ -13,25 +13,30 @@ const buildCustomersMap = async () => {
 };
 
 const importOrders = async (orders: iOrder[]) => {
-  Order.collection.insertMany(orders);
+  await Order.collection.insertMany(orders);
 };
 
-export const startImport = async (path: string) => {
-  const rootDir = './csv';
-  const filePath = `${rootDir}/${path}`;
-  const customers = await buildCustomersMap();
-  const orders: iOrder[] = [];
-  const stream = fs
-    .createReadStream(filePath)
-    .pipe(csv())
-    .on('data', row => {
-      const { orderId, customerId, item, quantity } = row;
-      const customer = customers.get(customerId);
-      if (customer) {
-        orders.push({ orderId, customerId, item, quantity });
-      }
-    })
-    .on('end', () => {
-      importOrders(orders);
-    });
-};
+export const startImport = async (path: string) =>
+  new Promise(async (resolve, reject) => {
+    const rootDir = './csv';
+    const filePath = `${rootDir}/${path}`;
+    const customers = await buildCustomersMap();
+    const orders: iOrder[] = [];
+    const stream = fs
+      .createReadStream(filePath)
+      .pipe(csv())
+      .on('data', row => {
+        const { orderId, customerId, item, quantity } = row;
+        const customer = customers.get(customerId);
+        if (customer) {
+          orders.push({ orderId, customerId, item, quantity });
+        }
+      })
+      .on('end', async () => {
+        await importOrders(orders);
+        resolve();
+      })
+      .on('error', error => {
+        reject(error);
+      });
+  });
