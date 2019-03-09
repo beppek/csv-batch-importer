@@ -97,15 +97,14 @@ export const seed = async (): Promise<{
   let totalOrders = 0;
   let orders: string = '';
   // Generate customers and orders
-  for (let i = 0; i < 100000; i++) {
+  for (let i = 0; i < 50000; i++) {
     const customer = generateCustomer(i);
-    const numberOfOrders = Math.floor(Math.random() * 25) + 1;
+    const numberOfOrders = Math.floor(Math.random() * 10) + 1;
     totalOrders += numberOfOrders;
     orders += generateOrders(customer, numberOfOrders);
     customers.push(customer);
   }
   await saveOrdersToCSV(orders, path);
   await Customer.collection.insertMany(customers);
-  console.log(`Generated ${totalOrders} orders`);
   return { path, totalOrders };
 };
