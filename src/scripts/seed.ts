@@ -5,7 +5,7 @@ import Customer, { iCustomer } from '../models/Customer';
 
 const ROOT_DIR = './csv';
 
-const writeHeader = async (path: string) => {
+const writeHeader = async (path: string): Promise<void> => {
   const file = fs.createWriteStream(`${path}`);
   file.write('orderId,customerId,item,quantity\n');
   file.end();
@@ -32,7 +32,7 @@ const createCSVFile = async (): Promise<string> =>
     });
   });
 
-const generateCustomer = (i: number) => {
+const generateCustomer = (i: number): iCustomer => {
   const id = crypto
     .createHash('md5')
     .update(`${Math.floor(Math.random() * 1000000) + 1}-${i}`)
@@ -46,7 +46,10 @@ const generateCustomer = (i: number) => {
   };
 };
 
-const generateOrder = (i: number, customer: iCustomer) => {
+const generateOrder = (
+  i: number,
+  customer: iCustomer,
+): { orderId: string; item: string; quantity: number } => {
   const id = crypto
     .createHash('md5')
     .update(
@@ -75,7 +78,7 @@ const generateOrders = (
   return orders;
 };
 
-const saveOrdersToCSV = async (orders: string, path: string) =>
+const saveOrdersToCSV = async (orders: string, path: string): Promise<void> =>
   new Promise((resolve, reject) => {
     const file = fs.createWriteStream(`${ROOT_DIR}/${path}`, { flags: 'a' });
     file.write(orders);

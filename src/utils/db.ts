@@ -6,7 +6,7 @@ const dbName = NODE_ENV === 'test' ? 'test-csv-import' : 'csv-import';
 
 const URI = `mongodb://localhost:27017/${dbName}`;
 
-export const connect = async () => {
+export const connect = async (): Promise<void> => {
   try {
     await mongoose.connect(URI, {
       useNewUrlParser: true,
@@ -17,7 +17,7 @@ export const connect = async () => {
   }
 };
 
-export const disconnect = async () => {
+export const disconnect = async (): Promise<void> => {
   await mongoose.disconnect();
 };
 

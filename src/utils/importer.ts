@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as csvParser from 'csv-parser';
 
-import Customer from '../models/Customer';
+import Customer, { iCustomer } from '../models/Customer';
 import Order, { iOrder } from '../models/Order';
 
-const buildCustomersMap = async () => {
+const buildCustomersMap = async (): Promise<Map<string, string>> => {
   const customers = await Customer.find({});
   const map = new Map(
     customers.map(i => [i.customerId, i.firstName] as [string, string]),
@@ -12,7 +12,7 @@ const buildCustomersMap = async () => {
   return map;
 };
 
-const importOrders = async (orders: iOrder[]) => {
+const importOrders = async (orders: iOrder[]): Promise<void> => {
   try {
     await Order.collection.insertMany(orders);
   } catch (error) {
@@ -20,7 +20,7 @@ const importOrders = async (orders: iOrder[]) => {
   }
 };
 
-export const startImport = (path: string) =>
+export const startImport = (path: string): Promise<number> =>
   new Promise(async (resolve, reject) => {
     const rootDir = './csv';
     const filePath = `${rootDir}/${path}`;
