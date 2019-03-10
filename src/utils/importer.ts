@@ -12,9 +12,10 @@ const buildCustomersMap = async (): Promise<Map<string, string>> => {
   return map;
 };
 
-const importOrders = async (orders: iOrder[]): Promise<void> => {
+const importOrders = async (orders: iOrder[]): Promise<number> => {
   try {
     await Order.collection.insertMany(orders);
+    return orders.length;
   } catch (error) {
     throw error;
   }
@@ -37,37 +38,37 @@ export const startImport = (path: string): Promise<number> =>
   new Promise(async (resolve, reject) => {
     const customers = await buildCustomersMap();
     let orders: iOrder[] = [];
-    const importPromises: Promise<any>[] = [];
     let totalImported = 0;
-    const csv = csvParser();
     fs.createReadStream(path)
-      .pipe(csv)
-      .on('data', row => {
+      .pipe(csvParser())
+      .on('data', async row => {
         const { orderId, customerId, item, quantity } = row;
         const customer = customers.get(customerId);
         if (customer) {
           orders.push({ orderId, customerId, item, quantity });
         }
-        if (orders.length === 350000) {
-          importPromises.push(importOrders(orders));
-          totalImported += orders.length;
+        if (orders.length === 250000) {
+          const ordersToImport = orders.slice();
           orders.length = 0;
-        }
-      })
-      .on('end', () => {
-        if (orders.length > 0) {
-          importPromises.push(importOrders(orders));
-          totalImported += orders.length;
-        }
-        Promise.all(importPromises)
-          .then(() => {
-            resolve(totalImported);
-          })
-          .catch(error => {
+          try {
+            const imported = await importOrders(ordersToImport);
+            totalImported += imported;
+          } catch (error) {
             reject(error);
-          });
+          }
+        }
       })
-      .on('error', error => {
-        reject(error);
+      .on('end', async () => {
+        if (orders.length > 0) {
+          const ordersToImport = orders.slice();
+          orders.length = 0;
+          try {
+            const imported = await importOrders(ordersToImport);
+            totalImported += imported;
+            resolve(totalImported);
+          } catch (error) {
+            reject(error);
+          }
+        }
       });
   });
