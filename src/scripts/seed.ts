@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as crypto from 'crypto';
 
 import Customer, { iCustomer } from '../models/Customer';
+import { iOrder } from '../models/Order';
 
 const ROOT_DIR = './csv';
 
@@ -17,17 +18,18 @@ const createCSVFile = async (): Promise<string> =>
       fs.mkdirSync(ROOT_DIR);
     }
     const dir =
-      process.env.NODE_ENV === 'test' ? `${Date.now()}-test` : `${Date.now()}`;
-    const fullDir = `${ROOT_DIR}/${dir}`;
-    if (!fs.existsSync(fullDir)) {
-      fs.mkdirSync(fullDir);
+      process.env.NODE_ENV === 'test'
+        ? `${ROOT_DIR}/temp`
+        : `${ROOT_DIR}/${Date.now()}`;
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
     }
     const fileName = 'orders.csv';
-    fs.writeFile(`${fullDir}/${fileName}`, '', async err => {
+    fs.writeFile(`${dir}/${fileName}`, '', async err => {
       if (err) {
         return reject(err);
       }
-      await writeHeader(`${fullDir}/${fileName}`);
+      await writeHeader(`${dir}/${fileName}`);
       resolve(`${dir}/${fileName}`);
     });
   });
@@ -46,19 +48,19 @@ const generateCustomer = (i: number): iCustomer => {
   };
 };
 
-const generateOrder = (
-  i: number,
-  customer: iCustomer,
-): { orderId: string; item: string; quantity: number } => {
+const generateOrder = (i: number, customer: iCustomer): iOrder => {
   const id = crypto
     .createHash('md5')
     .update(
-      `${Math.floor(Math.random() * 1000000) + 1}-${i}-${customer.customerId}`,
+      `${Math.random()
+        .toString(36)
+        .substr(2, 9)}-${i}-${customer.customerId}-${Math.random() * 1000000}`,
     )
     .digest('hex');
   const item = 'Toaster';
   return {
     orderId: id,
+    customerId: customer.customerId,
     item,
     quantity: Math.floor(Math.random() * 5) + 1,
   };
@@ -80,7 +82,7 @@ const generateOrders = (
 
 const saveOrdersToCSV = async (orders: string, path: string): Promise<void> =>
   new Promise((resolve, reject) => {
-    const file = fs.createWriteStream(`${ROOT_DIR}/${path}`, { flags: 'a' });
+    const file = fs.createWriteStream(path, { flags: 'a' });
     file.write(orders);
     file.end();
     file.on('close', () => {

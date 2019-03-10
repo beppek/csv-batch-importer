@@ -8,8 +8,9 @@ const init = async () => {
     mongoose.set('useCreateIndex', true);
     console.log('Connected.');
     console.log('Generating customers and orders file...');
-    await seed();
+    const { totalOrders } = await seed();
     console.log('Done');
+    console.log(`Generated ${totalOrders} orders`);
   } catch (error) {
     console.error(error);
   }
