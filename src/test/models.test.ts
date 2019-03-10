@@ -8,7 +8,7 @@ import Order from '../models/Order';
 describe('Test Models', () => {
   beforeAll(async () => {
     try {
-      await db.connect();
+      await db.connect('modelstest-csv-import');
     } catch (error) {
       console.error(error);
     }
