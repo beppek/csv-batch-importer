@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as csvParser from 'csv-parser';
 
-import Customer, { iCustomer } from '../models/Customer';
+import Customer from '../models/Customer';
 import Order, { iOrder } from '../models/Order';
 
 const buildCustomersMap = async (): Promise<Map<string, string>> => {
@@ -20,16 +20,27 @@ const importOrders = async (orders: iOrder[]): Promise<void> => {
   }
 };
 
+export const validatePath = (path: string): boolean => {
+  const extRegEx = /(?:\.([^.]+))?$/;
+  const fileExt = extRegEx.exec(path)[1];
+  if (fileExt !== 'csv') {
+    throw new Error('Path specified does not point to a CSV file');
+  }
+  const exists = fs.existsSync(path);
+  if (!exists) {
+    throw new Error('Could not find a CSV file at the specified path');
+  }
+  return true;
+};
+
 export const startImport = (path: string): Promise<number> =>
   new Promise(async (resolve, reject) => {
-    const rootDir = './csv';
-    const filePath = `${rootDir}/${path}`;
     const customers = await buildCustomersMap();
     let orders: iOrder[] = [];
     const importPromises: Promise<any>[] = [];
     let totalImported = 0;
     const csv = csvParser();
-    fs.createReadStream(filePath)
+    fs.createReadStream(path)
       .pipe(csv)
       .on('data', row => {
         const { orderId, customerId, item, quantity } = row;
