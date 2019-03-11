@@ -38,7 +38,7 @@ export const startImport = (path: string): Promise<number> =>
   new Promise(async (resolve, reject) => {
     const customers = await buildCustomersMap();
     let orders: iOrder[] = [];
-    let totalImported = 0;
+    const importPromises: Promise<number>[] = [];
     fs.createReadStream(path)
       .pipe(csvParser())
       .on('data', async row => {
@@ -51,8 +51,7 @@ export const startImport = (path: string): Promise<number> =>
           const ordersToImport = orders.slice();
           orders.length = 0;
           try {
-            const imported = await importOrders(ordersToImport);
-            totalImported += imported;
+            importPromises.push(importOrders(ordersToImport));
           } catch (error) {
             reject(error);
           }
@@ -63,8 +62,9 @@ export const startImport = (path: string): Promise<number> =>
           const ordersToImport = orders.slice();
           orders.length = 0;
           try {
-            const imported = await importOrders(ordersToImport);
-            totalImported += imported;
+            importPromises.push(importOrders(ordersToImport));
+            const imports = await Promise.all(importPromises);
+            const totalImported = imports.reduce((total, num) => total + num);
             resolve(totalImported);
           } catch (error) {
             reject(error);
