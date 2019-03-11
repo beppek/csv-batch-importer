@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
     "seed": "ts-node ./src/scripts/run.ts",
-    "start": "ts-node ./src/index.ts"
+    "start": "ts-node ./src/index.ts",
+    "performance": "ts-node ./src/test/performance.ts"
   },
   "keywords": [],
   "author": "Max Karlsson",

@@ -93,7 +93,29 @@ const saveOrdersToCSV = async (orders: string, path: string): Promise<void> =>
     });
   });
 
-export const seed = async (): Promise<{
+const createExtraOrders = async (
+  customers: iCustomer[],
+  path: string,
+): Promise<number> => {
+  let totalOrders = 0;
+  let orders = '';
+  const promises: Promise<void>[] = [];
+  for (let i = 0; i < 15; i++) {
+    customers.forEach(customer => {
+      const numberOfOrders = Math.floor(Math.random() * 25) + 1;
+      totalOrders += numberOfOrders;
+      orders += generateOrders(customer, numberOfOrders);
+    });
+    promises.push(saveOrdersToCSV(orders, path));
+    orders = '';
+  }
+  await Promise.all(promises);
+  return totalOrders;
+};
+
+export const seed = async (
+  generateExtraOrders: boolean = false,
+): Promise<{
   path: string;
   totalOrders: number;
 }> => {
@@ -110,6 +132,9 @@ export const seed = async (): Promise<{
     customers.push(customer);
   }
   await saveOrdersToCSV(orders, path);
+  if (generateExtraOrders) {
+    totalOrders += await createExtraOrders(customers, path);
+  }
   await Customer.collection.insertMany(customers);
   return { path, totalOrders };
 };
